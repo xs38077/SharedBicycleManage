@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <title>单车列表</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"></link>
+  </head>
+  <body>
+  <h2>单车列表</h2>
+  <hr>
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+         	 条件查询
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+  <form class="form-horizontal" role="form" th:action="@{/house/queryHouseList}" method="post">
+
+
+  <div class="form-group">
+	  <!-- 按钮 -->
+	  <div class="col-sm-offset-1 col-sm-1">
+		  <a  class="btn btn-primary" th:href="@{/bicycle/to_addBike}">添加单车</a>
+	  </div>
+	  <div class="col-sm-offset-1 col-sm-1">
+		  <a  class="btn btn-danger" th:href="@{/bicycle/deleteBicycle}">删除选中单车</a>
+	  </div>
+
+	  <!-- 模糊查询 -->
+    <label for="bType" class="col-sm-2 control-label">单车型号:</label>
+    <div  class="col-sm-3">
+		<input type="text" class="form-control" id="bType" name="bType" placeholder="输入查询的单车型号">
+    </div>
+	  <div class="col-sm-offset-1 col-sm-1">
+		  <button type="button" class="btn btn-primary" onclick="queryByTj()">查询</button>
+	  </div>
+  </div>
+
+</form>
+      </div>
+    </div>
+  </div>
+  </div>
+ 
+	<hr>
+	<div>
+		<table id="tb" class="table-bordered"></table>
+	</div>
+
+<!-- 修改房源模态框 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h4 class="modal-title" id="editModalLabel">修改单车</h4>
+			</div>
+			<div class="modal-body">
+				<form id="myform" class="form-horizontal" role="form" method="post">
+					<!-- spring mvc 可以将post转成put请求 -->
+					<input type="hidden" name="_method" value="PUT">
+
+					<input id="edit_bike_no" name="bikeNo" type="hidden" />
+					<!--单车型号 -->
+					<div class="form-group">
+						<label for="edit_model" class="col-sm-2 control-label">单车类别</label>
+						<div class="col-sm-4">
+							<select class="form-control" id="edit_model" name="model" required>
+								<option value="">--请选择--</option>
+							</select>
+						</div>
+					</div>
+					<!-- 型号 -->
+					<div class="form-group">
+						<label for="edit_bType" class="col-sm-2 control-label">单车型号</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control"  id="edit_bType" name="bType" placeholder="单车型号" readonly="readonly">
+						</div>
+					</div>
+					<!-- 供应商 -->
+					<div class="form-group">
+						<label for="edit_gys" class="col-sm-2 control-label">供应商</label>
+						<div class="col-sm-4">
+							<input type="text" class="form-control"  id="edit_gys" name="gys" placeholder="供应商" required>
+						</div>
+					</div>
+
+					<!-- 剩余数量 -->
+					<div class="form-group">
+						<label for="edit_remain_num" class="col-sm-2 control-label">剩余数量</label>
+						<div class="col-sm-4">
+							<input type="number" class="form-control"  id="edit_remain_num" name="remainNum" placeholder="剩余数量"  minLength="1" maxLength="4"  readonly="readonly">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<input type="button" value="修改" class="btn btn-primary" onclick="editSubmit()" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 修改房源模态框结束 -->
+<!-- 删除房源 -->
+<form id="deleteForm" method="POST">
+	<input type="hidden" name="_method" value="delete" />
+</form>
+
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/bootstrap/js/bootstrap-table/bootstrap-table.min.js}"></script>
+	<script th:src="@{/bootstrap/js/bootstrap-table/locale/bootstrap-table-zh-CN.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+    	//获取contextPath
+    	var contextPath = /*[[${#request.getContextPath()}]]*/
+    	$(function(){
+    		//1.加载出租方式
+    		loadType();
+    		//2.加载表格数据
+    		queryData();
+    		
+    	});
+    	//条件查询
+   	 	function queryByTj(){
+        	tb.bootstrapTable("refresh");
+   	 	}
+    	//查询数据
+    	var tb="";
+    	function queryData(){
+    		tb = $("#tb").bootstrapTable({
+    			url:contextPath+'/bicycle/queryBicycle',
+    			pagination:true,
+    			pageNumber:1,
+    			pageSize:3,
+    			pageList:[2,3,4],
+    			showExport: true,
+    			sidePagination:'server',
+    			queryParamsType:'undefined',//传递到后台的参数：默认 limit---> limit+offset    undefined:pageNumber+pageSize
+    			queryParams:function(params){
+    				start = (params.pageNumber-1)*params.pageSize;
+    				var newParams={
+    						pageNumber:params.pageNumber,
+    						pageSize:params.pageSize,
+    						bType:$("#bType").val()
+    				};
+					return newParams;    				
+    			},
+    			columns:[{
+					title:"多选框",
+					formatter:function(value,row,index){
+						let info="<input type='checkbox' value='"+row.bikeNo+"' name='checkedId'/>";
+
+						return info;
+					}
+				},{
+                    title:"编号",
+                    field:"bikeNo"
+                },{
+                    title:"单车型号",
+                    field:"btype"
+                },{
+                    title:"供应商",
+                    field:"gys"
+                },{
+                    title:"单车类别",
+                    field:"modelName"
+                },{
+                    title:"剩余数量",
+                    field:"remainNum"
+                },{
+                    title:"操作",
+                    formatter:function(value,row,index){
+                        let info="<a class='btn btn-primary' href='javascript:void(0)' id='info'>修改</a>";
+                        let del="<a  class='btn btn-danger' href='javascript:void(0)' id='del'>删除</a>";
+						let del1="<button  class='btn btn-danger' onclick=\"deleteHouse('"+row.bikeNo+"')\" id='del1'>删除1</button>";
+                        return info+" | "+del1;
+                    },
+                    events:etevents
+
+                }]
+    		});
+    	}
+    	 window.etevents={
+    		        'click #info':function(event,value,row,index){
+    		            $("#edit_bike_no").val(row.bikeNo);
+    		            $("#edit_model").val(row.model);
+    		            $("#edit_bType").val(row.btype);
+    		            $("#edit_gys").val(row.gys);
+    		            $("#edit_remain_num").val(row.remainNum);
+    		        	$("#editModal").modal("show");
+    		        },
+    		        'click #del':function(event,value,row,index){
+						let bikeno = row.bikeNo;
+						var action = contextPath +'/bicycle/deleteBike/'+bikeno;
+						if(confirm('确定要删除吗？')){
+							$('#deleteForm').attr('action',action).submit();
+						}
+    		        }
+    		    };
+
+    	//提交删除2
+    	 function deleteHouse(bikeno){
+			var action = contextPath +'/bicycle/deleteBike/'+bikeno;
+			if(confirm('确定要删除吗AAAAAA？')){
+				$('#deleteForm').attr('action',action).submit();
+			}
+    	}
+
+
+    	
+    	//模态框更新---------租赁方式、户型
+		//加载单车类型
+		function loadType(){
+			//groupId 作用1:调用dict接口 ;作用2:为了使用id选中下拉框$('#'+groupId)
+			$.ajax({
+				url:contextPath+'/bicycle/queryModel',
+				type:'GET',
+				data:'',
+				dataType:'JSON',
+				success:function(data){
+					var options = '';
+					$.each(data,function(index,dict){
+						var value = dict.dictValue;
+						var showName = dict.dictName;
+						options += "<option value='"+value+"'>"+showName+"</option>";
+					});
+					$('#edit_model').append(options);
+				}
+			});
+		};
+
+    	function editSubmit(){
+    		//使用serialiazeArray()方法，将表单数据
+    		var formArray = $('#myform').serializeArray();
+    		//请求参数{}:js对象
+    		var requestJsonParam = {};
+    		for(var i in formArray){
+    			var name = formArray[i].name;
+    			var value = formArray[i].value;
+    			requestJsonParam[name] = value;
+    		}
+    		var bike_no = $('#edit_bike_no').val();
+    		$.ajax({
+    			url:contextPath+'/bicycle/'+bike_no,
+    			type:'PUT',
+    			data:JSON.stringify(requestJsonParam),
+    			dataType:'JSON',
+    			contentType:'application/json;charset=UTF-8',
+    			success:function(data){
+    				//{"code":1 ,"message":"success"}
+    				console.log(data.code);
+    				if(1 == data.code){
+    					window.location.href=contextPath+'/bicycle/to_BikeList';
+    				}
+    			}
+    		});
+    		
+    	}
+    
+    </script>
+  </body>
+</html>

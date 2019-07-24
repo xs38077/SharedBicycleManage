@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.etoak.BicycleManage.bicycle.mapper.BicycleMapper" >
+  	<select id="queryModel"  resultType="dict">
+  		select id,dict_name as dictName,dict_value as dictValue ,sort from dict
+  		where group_id = 'model'
+  	</select>
+
+	<insert id="addBike" parameterType="bicycle">
+		insert into bicycle (bike_no,model,type,gys,remain_num)
+		values
+		(REPLACE(UUID(),'-',''),#{model},#{bType},#{gys},#{remainNum})
+	</insert>
+
+	<select id="queryList" parameterType="string" resultType="bicycleVo">
+		select b.bike_no as bikeNo,
+			   b.model,
+			   b.b_type as bType,
+			   b.gys,
+			   b.remain_num as remainNum,
+			   d.dict_name as modelName
+		from bicycle b
+		LEFT JOIN dict d
+	   ON b.model = d.dict_value
+		<where>
+			<if test="bType!=null and bType!='' ">
+				and b.b_type like '%${bType}%'
+			</if>
+		</where>
+	</select>
+
+	<update id="updateBicycle" parameterType="bicycle">
+		update bicycle
+		set
+		model = #{model},
+		gys = #{gys}
+		where
+		bike_no = #{bikeNo}
+	</update>
+
+	<delete id="deleteById" parameterType="string">
+		delete from bicycle where bike_no=#{bikeno}
+	</delete>
+</mapper>
