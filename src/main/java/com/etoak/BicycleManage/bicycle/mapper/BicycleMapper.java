@@ -18,4 +18,12 @@ public interface BicycleMapper {
     int updateBicycle(Bicycle bicycle);
 
     void deleteById(@Param("bikeno")String bikeno);
+
+    List<String> queryBikeType();
+
+    List<String> queryNoByType(@Param("type")String type);
+
+    void alertStatus(@Param("bno")String bno);
+
+    int returnBike(@Param("bno")String bno);
 }

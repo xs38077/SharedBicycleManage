@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <title>单车租赁</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"></link>
+  </head>
+  <body>
+  <hr>
+ <form class="form-horizontal" role="form" th:action="@{/rental/add}" method="post" enctype="multipart/form-data">
+     <!--租赁号-->
+     <div class="form-group">
+         <label for="bikeType" class="col-sm-2 control-label">租赁号</label>
+         <div class="col-sm-4">
+             <input type="text" class="form-control" name="rentalNo" id="rentalNo" placeholder="租赁号" readonly="readonly">
+         </div>
+     </div>
+     <!--单车型号 -->
+  <div class="form-group">
+    <label for="bikeType" class="col-sm-2 control-label">单车型号</label>
+    <div class="col-sm-4">
+        <select class="form-control" id="bikeType" name="bikeType"  onchange="loadBikeNoByType(this.value)" required>
+
+		</select>
+    </div>
+  </div>
+     <!-- 编号 -->
+     <div class="form-group">
+         <label for="bno" class="col-sm-2 control-label">单车编号</label>
+         <div class="col-sm-4">
+             <select class="form-control" id="bno" name="bno" required>
+             </select>
+         </div>
+     </div>
+  <!-- 租赁人 -->
+  <div class="form-group">
+    <label for="personName" class="col-sm-2 control-label">租赁人</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" name="personName" id="personName" placeholder="租赁人" required>
+    </div>
+  </div>
+
+     <!-- 联系电话 -->
+     <div class="form-group">
+         <label for="phone" class="col-sm-2 control-label">联系电话</label>
+         <div class="col-sm-4">
+             <input type="text" class="form-control" name="phone" id="phone" placeholder="联系电话" required>
+         </div>
+     </div>
+
+     <div class="form-group">
+         <label class="col-sm-2 control-label" for="startTime">租赁日期:</label>
+         <div class="col-sm-4">
+         <input type="text" class="form-control lay-date" id="startTime" name="startTime" autocomplete="off" readonly="readonly">
+         </div>
+     </div>
+     <div class="form-group">
+         <label class="col-sm-2 control-label" for="endTime">归还日期:</label>
+         <div class="col-sm-4">
+         <input type="text" class="form-control lay-date" id="endTime" name="endTime" autocomplete="off" required>
+         </div>
+     </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary">租赁</button>
+    </div>
+  </div>
+</form>
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/laydate.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+    	//获取contextPath
+    	var contextPath = /*[[${#request.getContextPath()}]]*/
+
+        //时间空间
+            laydate.render({
+                elem:'#startTime',
+                format:'yyyy-MM-dd HH:mm',
+                min:'1999-09-09',
+                max:'2099-06-16',
+                type:'datetime',
+                istime:false,
+                istoday:false,
+                value:new Date(new Date().getTime()),
+                isInitValue:true
+            });
+
+        laydate.render({
+            elem:'#endTime',
+            format:'yyyy-MM-dd HH:mm',
+            min:'1999-09-09',
+            max:'2099-06-16',
+            type:'datetime',
+            istime:false,
+            istoday:false,
+            value:null,
+            isInitValue:true
+        });
+
+
+    	$(function(){
+    		//1.加载单车型号
+    		loadBikeType();
+    		//2.加载租赁号
+            loadRentalNum();
+    		
+    	});
+    	//加载单车型号
+  		function loadBikeType(){
+  			//groupId 作用1:调用dict接口 ;作用2:为了使用id选中下拉框$('#'+groupId)
+    		$.ajax({
+    			url:contextPath+'/bicycle/queryBikeType',
+    			type:'GET',
+    			data:'',
+    			dataType:'JSON',
+    			success:function(data){
+    				var options = '<option value="" >请选择</option>';
+    				$.each(data,function(index,type){
+    					options += "<option value='"+type+"'>"+type+"</option>";
+    				});
+    				$('#bikeType').html(options);
+    			}
+    		});
+    	};
+
+  		//加载单车编号
+        function loadBikeNoByType(type){
+
+            $.ajax({
+                url:contextPath+'/bicycle/queryNoByType/'+type,
+                type:'GET',
+                data:'',
+                dataType:'JSON',
+                success:function(data){
+                    var options = '<option value="" >请选择</option>';
+                    $.each(data,function(index,type){
+                        options += "<option value='"+type+"'>"+type+"</option>";
+                    });
+                    $('#bno').html(options);
+                }
+            });
+        };
+
+        //加载租赁号
+        let rentNo = '';
+        function loadRentalNum(){
+            $.ajax({
+               url:contextPath+'/rental/loadRentNum',
+                type:'GET',
+                data:'',
+                dataType:'JSON',
+                success:function(data){
+                    let lastRentNum = data.lastRentNum;// 拿到最新的租赁号 -->  BICYCLE20190003
+                    let newRentNum = "";
+                    let thisYear = new Date().getFullYear();
+                    let lastNum = "0001";
+                    if(lastRentNum==null || lastRentNum == ''){
+                        newRentNum = "BICYCLE"+thisYear+lastNum;
+                        console.log(newRentNum);
+                        $("#rentalNo").val(newRentNum);
+                    }
+                    if(lastRentNum!=null){
+                        let j = parseInt(lastRentNum.substr(-4)); //拿到0003
+                        newRentNum='BICYCLE'+thisYear+("0000" + (++j)).substr(-4);
+                        console.log(newRentNum);
+                        $("#rentalNo").val(newRentNum);
+                    }
+                }
+            });
+
+        }
+    
+    </script>
+  </body>
+</html>

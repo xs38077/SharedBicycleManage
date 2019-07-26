@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <title>租赁列表</title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"></link>
+  </head>
+  <body>
+  <h2>租赁列表</h2>
+  <hr>
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+         	 条件查询
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+  <form class="form-horizontal" role="form" method="post">
+	  <div class="form-group">
+		  <!-- 按钮 -->
+		  <div class="col-sm-offset-1 col-sm-1">
+			  <a  class="btn btn-primary" th:href="@{/rental/to_rentBike}">租赁单车</a>
+		  </div>
+	  </div>
+ </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+	<hr>
+	<div>
+		<table id="tb" class="table-bordered"> </table>
+	</div>
+
+
+
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/bootstrap/js/bootstrap-table/bootstrap-table.min.js}"></script>
+	<script th:src="@{/bootstrap/js/bootstrap-table/locale/bootstrap-table-zh-CN.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+    	//获取contextPath
+    	var contextPath = /*[[${#request.getContextPath()}]]*/
+    	$(function(){
+    		//2.加载表格数据
+    		queryData();
+
+    	});
+    	//条件查询
+   	 	function queryByTj(){
+        	tb.bootstrapTable("refresh");
+   	 	}
+    	//查询数据
+    	let tb="";
+    	function queryData(){
+    		tb = $("#tb").bootstrapTable({
+    			url:contextPath+'/rental/queryRental',
+    			pagination:true,
+    			pageNumber:1,
+    			pageSize:3,
+    			pageList:[2,3,4],
+    			showExport: true,
+    			sidePagination:'server',
+    			queryParamsType:'undefined',//传递到后台的参数：默认 limit---> limit+offset    undefined:pageNumber+pageSize
+    			queryParams:function(params){
+    				start = (params.pageNumber-1)*params.pageSize;
+    				var newParams={
+    						pageNumber:params.pageNumber,
+    						pageSize:params.pageSize
+
+    				};
+					return newParams;
+    			},
+    			columns:[{
+                    title:"租赁号",
+                    field:"rentalNo"
+                },{
+                    title:"单车型号",
+                    field:"bikeType"
+                },{
+                    title:"单车编号",
+                    field:"bno"
+                },{
+                    title:"租赁人",
+                    field:"personName"
+                },{
+					title:"联系电话",
+					field:"phone"
+				},{
+					title:"租赁时间",
+					field:"startTime"
+				},{
+					title:"归还时间",
+					field:"endTime"
+				},{
+					title:"租赁状态",
+					formatter:function(value,row,index){
+						 return row.status==1?"租赁中":"已还车";
+					}
+				},{
+                    title:"操作",
+                    formatter:function(value,row,index){
+                    	if(row.status==1){
+							let info="<a class='btn btn-primary' href='javascript:void(0)' id='info'>还车</a>";
+							return info;
+						}else{
+							let info="<a class='btn btn-primary' href='javascript:void(0)' disabled id='info'>还车</a>";
+							return info;
+						}
+
+                    },
+                    events:etevents
+
+                }]
+    		});
+    	}
+    	 window.etevents={
+    		        'click #info':function(event,value,row,index){
+    		        	let bno = row.bno;
+						$.ajax({
+							url:contextPath+'/rental/returnBike/'+bno,
+							type:'POST',
+							data:'',
+							dataType:'JSON',
+							success:function (data) {
+                                if("success"==data.status){
+                                    tb.bootstrapTable("refresh");
+                                }
+							}
+						});
+    		        }
+    		    };
+
+    </script>
+  </body>
+</html>

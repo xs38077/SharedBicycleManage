@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.etoak.BicycleManage.rental.mapper.RentalMapper" >
+    <select id="loadRentNum" resultType="string">
+        SELECT rental_no from rental ORDER BY start_time desc limit 1
+    </select>
+
+    <insert id="add" parameterType="rental">
+        insert into rental (
+            rental_no,bike_type,bno,person_name,phone,start_time,end_time
+        ) values
+        (
+         #{rentalNo},#{bikeType},#{bno},#{personName},#{phone},#{startTime},#{endTime}
+        )
+
+    </insert>
+
+    <select id="queryRental" resultType="rentalVo">
+        select rental_no as rentalNo,bike_type as bikeType,bno,person_name as personName,
+               phone,start_time as startTime,end_time as endTime, status
+        from rental r left join bicycle b  on r.bno = b.bike_no
+    </select>
+
+    <update id="returnBike" parameterType="string">
+        update rental set end_time = NOW() where bno=#{bno}
+    </update>
+</mapper>

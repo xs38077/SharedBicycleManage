@@ -17,4 +17,12 @@ public interface BicycleService {
     int updataBicycle(Bicycle bicycle);
 
     void deleteBikeById(String bikeno);
+
+    List<String> queryBikeType();
+
+    List<String> queryNoByType(String type);
+
+    void alertStatus(String bno);
+
+    int returnBike(String bno);
 }

@@ -3,7 +3,8 @@ CREATE TABLE bicycle(
 	model varchar(32) COMMENT '单车类别',
 	b_type varchar(32) COMMENT '单车型号',
 	gys varchar(32) COMMENT '供应商',
-	remain_num int(11) COMMENT '剩余数量'
+	remain_num int(11) COMMENT '剩余数量',
+	status int(1) DEFAULT 0 COMMENT '租赁状态(0-已还车，1-租赁中)'
 );
 
 CREATE TABLE `dict` (
@@ -34,22 +35,24 @@ select b.bike_no as bikeNo,
 ##租赁表字段：租赁号，单车型号(外键)，单车编号(外键)，租赁人，联系电话，租赁时间，归还时间，租赁状态(租赁中、已还车)
 CREATE TABLE rental(
 	rental_no varchar(32) PRIMARY KEY COMMENT '租赁号',	
-	btype varchar(32) COMMENT '单车型号 外键',
+	bike_type varchar(32) COMMENT '单车型号 外键',
 	bno varchar(32) COMMENT '单车编号 外键',
 	person_name varchar(32) COMMENT '租赁人',
-	phone int(11) COMMENT '联系电话',
+	phone varchar(11) COMMENT '联系电话',
 	start_time datetime COMMENT '租赁时间(默认当前时间)',
 	end_time datetime COMMENT '归还时间',
-	status varchar(32) COMMENT '租赁状态(0-已还车，1-租赁中)',
 	##FOREIGN KEY (`btype`) REFERENCES `bicycle` (`b_type`),
 	FOREIGN KEY (`bno`) REFERENCES `bicycle` (`bike_no`)
 );
 
 
+select DISTINCT b_type from bicycle;
+select * from bicycle GROUP BY b_type;
 
+select bike_no from bicycle where b_type = 'JAT001' and b_status = 0 and remain_num>0;
 
-
-
+##拿取租赁号最大(最新一条)的记录
+SELECT rental_no from rental ORDER BY start_time desc limit 1;
 
 
 

@@ -56,4 +56,24 @@ public class BicycleServiceImpl implements BicycleService {
     public void deleteBikeById(String bikeno) {
         bicycleMapper.deleteById(bikeno);
     }
+
+    @Override
+    public List<String> queryBikeType() {
+        return bicycleMapper.queryBikeType();
+    }
+
+    @Override
+    public List<String> queryNoByType(String type) {
+        return bicycleMapper.queryNoByType(type);
+    }
+
+    @Override
+    public void alertStatus(String bno) {
+        bicycleMapper.alertStatus(bno);
+    }
+
+    @Override
+    public int returnBike(String bno) {
+        return bicycleMapper.returnBike(bno);
+    }
 }

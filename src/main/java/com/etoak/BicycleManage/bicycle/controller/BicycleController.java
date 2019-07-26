@@ -68,4 +68,19 @@ public class BicycleController {
         return "redirect:/bicycle/to_BikeList";
     }
 
+    //加载单车型号
+    @RequestMapping("queryBikeType")
+    @ResponseBody
+    public List<String> queryBikeType(){
+        List<String> typeList = bicycleService.queryBikeType();
+        return typeList;
+    }
+
+    @RequestMapping("queryNoByType/{type}")
+    @ResponseBody
+    public List<String> queryNoByType(@PathVariable("type")String type){
+        List<String> noList = bicycleService.queryNoByType(type);
+        return noList;
+    }
+
 }

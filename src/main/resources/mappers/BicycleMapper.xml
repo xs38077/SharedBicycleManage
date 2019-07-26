@@ -7,7 +7,7 @@
   	</select>
 
 	<insert id="addBike" parameterType="bicycle">
-		insert into bicycle (bike_no,model,type,gys,remain_num)
+		insert into bicycle (bike_no,model,b_type,gys,remain_num)
 		values
 		(REPLACE(UUID(),'-',''),#{model},#{bType},#{gys},#{remainNum})
 	</insert>
@@ -41,4 +41,31 @@
 	<delete id="deleteById" parameterType="string">
 		delete from bicycle where bike_no=#{bikeno}
 	</delete>
+
+	<select id="queryBikeType" resultType="string">
+		select DISTINCT b_type from bicycle
+	</select>
+
+    <select id="queryNoByType" resultType="string">
+        select bike_no from bicycle where b_type = #{type} and status = 0 and remain_num>0
+    </select>
+	<!-- 租赁成功，修改单车租赁状态,剩余数量减1 -->
+	<update id="alertStatus" parameterType="string">
+		update bicycle
+		<set>
+			status = 1,
+			remain_num = remain_num-1,
+		</set>
+		 where bike_no =#{bno}
+	</update>
+	<!--还车，修改单车状态和数量-->
+
+	<update id="returnBike" parameterType="string">
+		update bicycle
+		<set>
+			status = 0,
+			remain_num = remain_num+1,
+		</set>
+		where bike_no =#{bno}
+	</update>
 </mapper>

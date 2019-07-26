@@ -19,4 +19,6 @@ public class Bicycle {
 
     private int remainNum;
 
+    private int status;
+
 }
