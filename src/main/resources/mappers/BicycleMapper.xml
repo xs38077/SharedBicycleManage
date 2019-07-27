@@ -18,7 +18,8 @@
 			   b.b_type as bType,
 			   b.gys,
 			   b.remain_num as remainNum,
-			   d.dict_name as modelName
+			   d.dict_name as modelName,
+		       b.status
 		from bicycle b
 		LEFT JOIN dict d
 	   ON b.model = d.dict_value

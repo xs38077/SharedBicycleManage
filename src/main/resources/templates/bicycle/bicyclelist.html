@@ -187,7 +187,7 @@
                         let info="<a class='btn btn-primary' href='javascript:void(0)' id='info'>修改</a>";
                         let del="<a  class='btn btn-danger' href='javascript:void(0)' id='del'>删除</a>";
 						let del1="<button  class='btn btn-danger' onclick=\"deleteHouse('"+row.bikeNo+"')\" id='del1'>删除1</button>";
-                        return info+" | "+del1;
+                        return info+" | "+del;
                     },
                     events:etevents
 
@@ -206,9 +206,15 @@
     		        'click #del':function(event,value,row,index){
 						let bikeno = row.bikeNo;
 						var action = contextPath +'/bicycle/deleteBike/'+bikeno;
-						if(confirm('确定要删除吗？')){
-							//$('#deleteForm').attr('action',action).submit();
+						if(row.status==1){
+                            alert("该单车正在租赁中...不能删除");
+
+						}else{
+                            if(confirm('确定要删除吗？')){
+                                //$('#deleteForm').attr('action',action).submit();
+                            }
 						}
+
     		        }
     		    };
 
