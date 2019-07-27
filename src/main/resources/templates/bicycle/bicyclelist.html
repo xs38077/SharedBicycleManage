@@ -179,7 +179,13 @@
                     field:"modelName"
                 },{
                     title:"剩余数量",
-                    field:"remainNum"
+					formatter:function (value, row, index) {
+                    	if(row.remainNum<5){
+							let style = "<td style='color: red'>"+row.remainNum+"</td>";
+							return style;
+						}
+
+					}
                 },{
                     title:"操作",
                     formatter:function(value,row,index){

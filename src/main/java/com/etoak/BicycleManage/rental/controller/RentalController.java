@@ -68,7 +68,7 @@ public class RentalController {
         int count1 = bicycleService.returnBike(bno);
         HashMap<String, String> map = new HashMap<>();
         if(count==1 && count1==1){
-            map.put("status","succeses");
+            map.put("status","success");
 
         }else{
             map.put("status","error");

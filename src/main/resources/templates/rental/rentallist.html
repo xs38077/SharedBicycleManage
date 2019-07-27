@@ -127,8 +127,9 @@
     		        	let bno = row.bno;
 						$.ajax({
 							url:contextPath+'/rental/returnBike/'+bno,
-							type:'POST',
+							type:'GET',
 							data:'',
+                            async:false,
 							dataType:'JSON',
 							success:function (data) {
                                 if("success"==data.status){
