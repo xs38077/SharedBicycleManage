@@ -162,7 +162,6 @@
 					title:"多选框",
 					formatter:function(value,row,index){
 						let info="<input type='checkbox' value='"+row.bikeNo+"' name='checkedId'/>";
-
 						return info;
 					}
 				},{
@@ -180,11 +179,7 @@
                 },{
                     title:"剩余数量",
 					formatter:function (value, row, index) {
-                    	if(row.remainNum<5){
-							let style = "<td style='color: red'>"+row.remainNum+"</td>";
-							return style;
-						}
-
+						return row.remainNum<=5?"<span style='color: red'>"+row.remainNum+"</span>":"<span>"+row.remainNum+"</span>";
 					}
                 },{
                     title:"操作",
@@ -212,7 +207,7 @@
 						let bikeno = row.bikeNo;
 						var action = contextPath +'/bicycle/deleteBike/'+bikeno;
 						if(confirm('确定要删除吗？')){
-							$('#deleteForm').attr('action',action).submit();
+							//$('#deleteForm').attr('action',action).submit();
 						}
     		        }
     		    };
@@ -221,7 +216,8 @@
     	 function deleteHouse(bikeno){
 			var action = contextPath +'/bicycle/deleteBike/'+bikeno;
 			if(confirm('确定要删除吗AAAAAA？')){
-				$('#deleteForm').attr('action',action).submit();
+				alert(action);
+				//$('#deleteForm').attr('action',action).submit();
 			}
     	}
 
