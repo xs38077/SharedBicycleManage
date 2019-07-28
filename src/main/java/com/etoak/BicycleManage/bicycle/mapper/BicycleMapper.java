@@ -26,4 +26,6 @@ public interface BicycleMapper {
     void alertStatus(@Param("bno")String bno);
 
     int returnBike(@Param("bno")String bno);
+
+    void deleteCheckedBicycle(List<String> ids);
 }

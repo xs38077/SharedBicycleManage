@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,14 @@ public class BicycleController {
     public List<String> queryNoByType(@PathVariable("type")String type){
         List<String> noList = bicycleService.queryNoByType(type);
         return noList;
+    }
+
+    @RequestMapping("deleteCheckedBicycle")
+    public String deleteCheckedBicycle(String ids){
+        String[] idsArray = ids.split(",");
+        List<String> idList = Arrays.asList(idsArray);
+        bicycleService.deleteCheckedBicycle(idList);
+        return "redirect:/bicycle/to_BikeList";
     }
 
 }

@@ -30,7 +30,7 @@
 		  <a  class="btn btn-primary" th:href="@{/bicycle/to_addBike}">添加单车</a>
 	  </div>
 	  <div class="col-sm-offset-1 col-sm-1">
-		  <a  class="btn btn-danger" th:href="@{/bicycle/deleteBicycle}">删除选中单车</a>
+		  <button  class="btn btn-danger" onclick="deleteCheckedBike(ids)" >删除选中单车</button>
 	  </div>
 
 	  <!-- 模糊查询 -->
@@ -211,7 +211,7 @@
 
 						}else{
                             if(confirm('确定要删除吗？')){
-                                //$('#deleteForm').attr('action',action).submit();
+                                $('#deleteForm').attr('action',action).submit();
                             }
 						}
 
@@ -277,6 +277,15 @@
     		});
     		
     	}
+    	let ids = "";
+    	let selections = $("input[name='checkedId']");
+    	$.each(selections,function(index,dict){
+    	    //TODO
+        });
+
+    	function deleteCheckedBike(ids){
+
+        }
     
     </script>
   </body>

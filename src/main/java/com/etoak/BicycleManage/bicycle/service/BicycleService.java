@@ -25,4 +25,6 @@ public interface BicycleService {
     void alertStatus(String bno);
 
     int returnBike(String bno);
+
+    void deleteCheckedBicycle(List<String> ids);
 }
