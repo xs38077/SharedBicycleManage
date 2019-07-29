@@ -69,4 +69,11 @@
 		</set>
 		where bike_no =#{bno}
 	</update>
+
+	<delete id="deleteCheckedBicycle" parameterType="string" >
+		delete from bicycle where bike_no in
+		(
+		    ${ids}
+			)
+	</delete>
 </mapper>

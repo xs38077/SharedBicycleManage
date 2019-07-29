@@ -30,7 +30,7 @@
 		  <a  class="btn btn-primary" th:href="@{/bicycle/to_addBike}">添加单车</a>
 	  </div>
 	  <div class="col-sm-offset-1 col-sm-1">
-		  <button  class="btn btn-danger" onclick="deleteCheckedBike(ids)" >删除选中单车</button>
+		  <button type="button" class="btn btn-danger" onclick="deleteCheckedBike()" >删除选中单车</button>
 	  </div>
 
 	  <!-- 模糊查询 -->
@@ -114,7 +114,7 @@
 </div>
 <!-- 修改房源模态框结束 -->
 <!-- 删除房源 -->
-<form id="deleteForm" method="POST">
+<form id="deleteForm" method="post">
 	<input type="hidden" name="_method" value="delete" />
 </form>
 
@@ -161,7 +161,12 @@
     			columns:[{
 					title:"多选框",
 					formatter:function(value,row,index){
-						let info="<input type='checkbox' value='"+row.bikeNo+"' name='checkedId'/>";
+						let info='';
+						if(row.status==1){
+							 info="<input type='checkbox' value='"+row.bikeNo+"' name='checkedId' disabled/>";
+						}else{
+							 info="<input type='checkbox' value='"+row.bikeNo+"' name='checkedId' />";
+						}
 						return info;
 					}
 				},{
@@ -186,7 +191,7 @@
                     formatter:function(value,row,index){
                         let info="<a class='btn btn-primary' href='javascript:void(0)' id='info'>修改</a>";
                         let del="<a  class='btn btn-danger' href='javascript:void(0)' id='del'>删除</a>";
-						let del1="<button  class='btn btn-danger' onclick=\"deleteHouse('"+row.bikeNo+"')\" id='del1'>删除1</button>";
+						let del1="<button type='button'  class='btn btn-danger' onclick=\"deleteHouse('"+row.bikeNo+"')\" id='del1'>删除1</button>";
                         return info+" | "+del;
                     },
                     events:etevents
@@ -209,6 +214,7 @@
 						if(row.status==1){
                             alert("该单车正在租赁中...不能删除");
 
+
 						}else{
                             if(confirm('确定要删除吗？')){
                                 $('#deleteForm').attr('action',action).submit();
@@ -218,14 +224,7 @@
     		        }
     		    };
 
-    	//提交删除2
-    	 function deleteHouse(bikeno){
-			var action = contextPath +'/bicycle/deleteBike/'+bikeno;
-			if(confirm('确定要删除吗AAAAAA？')){
-				alert(action);
-				//$('#deleteForm').attr('action',action).submit();
-			}
-    	}
+
 
 
     	
@@ -277,14 +276,21 @@
     		});
     		
     	}
-    	let ids = "";
-    	let selections = $("input[name='checkedId']");
-    	$.each(selections,function(index,dict){
-    	    //TODO
-        });
 
-    	function deleteCheckedBike(ids){
 
+    	function deleteCheckedBike(){
+			let ids = "'";
+			let selections = $("input[name='checkedId']:checked");
+			if(selections.length==0){
+				alert("请至少选择一条记录!");
+				return;
+			}
+			$.each(selections,function(index,id){
+				ids+=id.value+"','";
+			});
+			ids+="'";
+			let action = contextPath+"/bicycle/"+ids;
+			$('#deleteForm').attr('action',action).submit();
         }
     
     </script>

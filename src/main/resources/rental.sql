@@ -31,7 +31,7 @@ CREATE TABLE `rental`  (
   `end_time` datetime(0) NULL DEFAULT NULL COMMENT '归还时间',
   PRIMARY KEY (`rental_no`) USING BTREE,
   INDEX `bno`(`bno`) USING BTREE,
-  CONSTRAINT `rental_ibfk_1` FOREIGN KEY (`bno`) REFERENCES `bicycle` (`bike_no`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `rental_ibfk_1` FOREIGN KEY (`bno`) REFERENCES `bicycle` (`bike_no`)  ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------

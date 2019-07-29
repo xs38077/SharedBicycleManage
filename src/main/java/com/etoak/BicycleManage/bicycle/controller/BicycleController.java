@@ -84,11 +84,11 @@ public class BicycleController {
         return noList;
     }
 
-    @RequestMapping("deleteCheckedBicycle")
-    public String deleteCheckedBicycle(String ids){
-        String[] idsArray = ids.split(",");
-        List<String> idList = Arrays.asList(idsArray);
-        bicycleService.deleteCheckedBicycle(idList);
+    @DeleteMapping("/{ids}")
+    public String deleteCheckedBicycle(@PathVariable("ids")String ids){
+
+        int result = bicycleService.deleteCheckedBicycle(ids);
+        System.out.println(result);
         return "redirect:/bicycle/to_BikeList";
     }
 

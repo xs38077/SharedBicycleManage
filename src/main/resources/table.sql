@@ -42,7 +42,7 @@ CREATE TABLE rental(
 	start_time datetime COMMENT '租赁时间(默认当前时间)',
 	end_time datetime COMMENT '归还时间',
 	##FOREIGN KEY (`btype`) REFERENCES `bicycle` (`b_type`),
-	FOREIGN KEY (`bno`) REFERENCES `bicycle` (`bike_no`)
+	FOREIGN KEY (`bno`) REFERENCES `bicycle` (`bike_no`)  ON DELETE CASCADE
 );
 
 

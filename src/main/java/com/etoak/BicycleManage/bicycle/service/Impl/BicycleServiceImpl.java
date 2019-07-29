@@ -78,7 +78,7 @@ public class BicycleServiceImpl implements BicycleService {
     }
 
     @Override
-    public void deleteCheckedBicycle(List<String> ids) {
-        bicycleMapper.deleteCheckedBicycle(ids);
+    public int deleteCheckedBicycle(String ids) {
+        return bicycleMapper.deleteCheckedBicycle(ids);
     }
 }
